@@ -1,0 +1,145 @@
+11.10.2024
+------------------------------------------------------------------------------------------------------------------------
+https://angular.dev/guide/components/selectors
+Selektor atrybutu [] -> atrybutów	Dopasowuje elementy na podstawie obecności
+                        atrybutu HTML i opcjonalnie dokładnej wartości tego atrybutu.
+selector:'[appButton]' -> za kazdym razem gdy ten atrybut do elementu zostanie dodany
+                          zostanie wywołany ten komponent lub przejmie nad nim kontrolę
+                          <div appButton></div> -> wywoła app-button.component.ts
+Mogą być one łączone innymi selektorami np. button[appButton] -> element przycisku w dowolnym miejscu mojej aplikacji powinien
+                                                              być kontrolowany przez ten komponent
+
+CSS class selector . -> klas	Dopasowuje elementy na podstawie ich klasy CSS.
+                        np. button.button -> selektor klasy CSS button, kóry służy do kontrolowania przycisków z klasą button
+
+pozwala to na użycie wbudowanyhc elementów oraz rozszerzenie ich o dodatkowe funkcjonalności
+button.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+ng-content z select="" -> wymaga selektora CSS na końcu oraz akceptuje taki sam rodzaj,
+                          który można ustawić na komponentach jako selektor atrybutu
+                          po czym wyświetli zawartość, która pasuje do określonego tutaj selekora
+                          np. ng-content select=".header"
+button.component.html
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+ngProjectAs -> można go użyć w każdym elemencie, w którym jest projekcia zawartości,
+               Pozwala na zdefinioowanie selektora, który jest używany do określenia,
+               co jest projekcją
+header.component.html
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+<!--  możliwość dodania zawartości pomiędzy ng-conntent pojawiła się w najnowszej wersji Angulara-->
+<!--  pozwala ona na wyświetlenie zawartości wewnątrz ng-ontent w przypadku gdy nie zostanie spełniony selektor-->
+  <ng-content select="icon">
+    ➤
+  </ng-content>
+  header.component.html
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+<ng-content select="input, textarea"/> -> pozwala na określenie wielu selektorów w jednym ng-content
+selector:'button[appButton], a[appButton]' -> pozwala na określenie wielu selektorów w jednym selektorze
+button.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+encaapsulation: ViewEncapsulation.Emulated -> pozwala na zdefiniowanie sposobu w jaki style są dodawane do komponentu
+                                              Emulated - domyślnie, ShadowDom - dodaje style do shadow dom, None - nie dodaje stylów
+                                              do komponentu
+button.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+:host -> pozwala na dodanie stylów do komponentu, które są używane tylko wewnątrz tego komponentu
+button.component.css
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+host: { 'class': 'button' } -> pozwala na dodanie klasy do wszystkich kontrolek aplikacji w dowolnym miejscu
+button.component.ts
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+Są to stare metody do do przekazywania argumentwów i raczej są nie zalecane
+
+@HostBinding('class') className = 'control' -> dodaje className jako właściwość do elementu hosta i nadaje mu wartość 'control'
+ @HostListener('click') onClick() { - dodaje listener do elementu hosta, który nasłuchuje na kliknięcie
+   console.log('Control clicked');
+ }
+ programowy dostęp do hosta
+  // ElementRef -> jets to odniesienie do jakiegoś innego elementu renderowanego
+                  na stronie jednak gdy jest wstrzykiwany do komponentu Angular da dostęp do elementu hosta
+                  tego elementu
+  private el = inject(ElementRef)
+
+host: {class: 'control', '(click)': 'onControlClick()'} zalecane podejście
+button.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+<div [class]="{status: true, 'status-online':currentStatus === 'online'}"> -> jeżeli chce sie dodoać klasę do elementu
+                                                                          na podstawie warunku można to zrobić w ten sposób
+jeżeli w kluczy czyli nazwie klasy jest - to trzeba użyć '' -> 'status-online':currentStatus === 'online'
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+dynamiczne wiązanie klas oraz styli
+<div
+  [class]="{
+  status: true,
+    'status-online':currentStatus === 'online' ,
+    'status-offline':currentStatus === 'offline',
+    'status-unknown':currentStatus === 'unknown'
+  }"
+  [style]="{
+    'background-color': currentStatus === 'online' ? '#c3e6cb' : currentStatus === 'offline' ? '#f5c6cb' : '#c6c6c6',
+    }">
+
+  <!--wiązanie właściwości do stylu-->
+<!--    [style.fontWeight] = currentStatus === 'offline' ? 'bold' : 'normal';>-->
+<!--    [style]="{-->
+<!--    'background-color': currentStatus === 'online' ? '#c3e6cb' : currentStatus === 'offline' ? '#f5c6cb' : '#c6c6c6',-->
+<!--    }"-->
+
+
+
+!!!!!!!
+odpalić CMS z tfs'a -> nie udało sie bo nie mam uprawnień
+------------------------------------------------------------------------------------------------------------------------
+12.10.2024
+typ unii -> | -> pozwala na zdefiniowanie typu, który może być jednym z kilku innych typów
+                 określa on że wartość może być jednym z kilku stringów np. 'online' | 'offline' | 'unknown'
+                 jeżeli będą inne wartości to zostanie zwrócony błąd
+type Status = 'online' | 'offline' | 'unknown';
+currentStatus: 'online' | 'offline' | "unknown" = 'offline';
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+Component lifeCycle
+

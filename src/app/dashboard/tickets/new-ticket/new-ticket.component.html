@@ -1,0 +1,17 @@
+<!--<from (ngForm)="">-->
+<form>
+  <app-control nameLabel="Title">
+    <input id="title" name="title" type="text">
+  </app-control>
+  <app-control nameLabel="Request">
+    <textarea id="Request" name="Request" rows="3"></textarea>
+  </app-control>
+  <p>
+    <button appButton>
+      Submit
+      <!--      <span class="icon">➞</span>-->
+      <span ngProjectAs="icon">➞</span>
+    </button>
+
+  </p>
+</form>
