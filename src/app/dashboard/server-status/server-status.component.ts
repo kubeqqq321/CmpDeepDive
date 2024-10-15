@@ -1,5 +1,5 @@
-import {Component, OnInit, OnDestroy, inject, DestroyRef} from '@angular/core';
-import { TimeInterval } from 'rxjs/internal/operators/timeInterval';
+import {Component, OnInit, OnDestroy, inject, DestroyRef, signal, effect} from '@angular/core';
+import {TimeInterval} from 'rxjs/internal/operators/timeInterval';
 
 @Component({
   selector: 'app-server-status',
@@ -10,15 +10,44 @@ import { TimeInterval } from 'rxjs/internal/operators/timeInterval';
 })
 
 // klasa z onDestory
-export class ServerStatusComponent implements OnInit, OnDestroy{
-  currentStatus: 'online' | 'offline' | "unknown" = 'offline';
+export class ServerStatusComponent implements OnInit, OnDestroy {
+
+  // currentStatus: 'online' | 'offline' | "unknown" = 'offline';
+  // ||
+  // takie samo tylko zrobione przy pomocy funkcji signal()
+  currentStatus = signal<'online' | 'offline' | 'unknown'>('offline');
+
+
   private interval?: ReturnType<typeof setInterval>
 
-  constructor() {}
+  constructor() {
+    effect(() => {
+      console.log(this.currentStatus());
+    });
+
+    // 136 -> Angular — kompletny przewodnik (edycja 2024)
+    // effect((onCleanup) => {
+    //   const tasks = getTasks();
+    //   const timer = setTimeout(() => {
+    //     console.log(`Current number of tasks: ${tasks().length}`);
+    //   }, 1000);
+    //   onCleanup(() => {
+    //     clearTimeout(timer);
+    //   });
+    // });
+
+  }
+
   ngOnInit() {
+    // this.interval = setInterval(() => {
+    //   const random = Math.random();
+    //   this.currentStatus = random < 0.5 ? 'online' : random > 0.90 ? 'offline' : 'unknown';
+    // }, 5000);
+    // ||
+    // to samo zrobione przy pomocy funkcji signal()
     this.interval = setInterval(() => {
       const random = Math.random();
-      this.currentStatus = random < 0.5 ? 'online' : random > 0.90 ? 'offline' : 'unknown';
+      this.currentStatus.set(random < 0.5 ? 'online' : random > 0.90 ? 'offline' : 'unknown');
     }, 5000);
   }
 

@@ -1,11 +1,18 @@
 <!--<from (ngForm)="">-->
 <!--<form (ngSubmit)="onSubmit(titleInput, descriptionInput, form)" #formHTML>-->
-<form (ngSubmit)="onSubmit(titleInput, descriptionInput)" #formHTML>
+
+<!--to jest używane dla #input-->
+<form #formHTML (ngSubmit)="onSubmit(titleInput, descriptionInput)">
+
+  <!--  to jest wykorzystywane dla [(ngModel)]="enteredTitle"-->
+  <!--<form #formHTML (ngSubmit)="onSubmit()">-->
   <app-control nameLabel="Title">
-    <input id="title" name="title" type="text" #titleInput>
+    <input #input #titleInput id="title" name="title" type="text">
+    <!--    <input #input [(ngModel)]="enteredTitle" id="title" name="title" type="text">-->
   </app-control>
   <app-control nameLabel="Request">
-    <textarea id="Request" name="Request" rows="3" #descriptionInput></textarea>
+    <textarea #descriptionInput #input id="Request" name="Request" rows="3"></textarea>
+    <!--    <textarea [(ngModel)]="enteredText" #input id="Request" name="Request" rows="3"></textarea>-->
   </app-control>
   <p>
     <button appButton>

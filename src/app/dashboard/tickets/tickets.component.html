@@ -3,7 +3,28 @@
 <!--    <img src="list.png" alt="A list of items" />-->
 <!--    <h2>Support Tickets</h2>-->
 <!--  </header>-->
+
+<div>
+  <ul>
+    @for (ticket of tickets; track ticket.id) {
+      <li>
+        <app-ticket [data]="ticket" (close)="onClose(ticket.id)"/>
+        <!--        - {{ $first }} -> zwraca true jeżeli jest to pierwszy element w pętli-->
+        <!--        - {{ $last }} -> zwraca true jeżeli jest to ostatni element w pętli-->
+        <!--        - {{ $even }} -> zwraca true jeżeli jest to parzysty element w pętli-->
+        <!--        - {{ $odd }} -> zwraca true jeżeli jest to nieparzysty element w pętli-->
+        <!--        - {{ $index }} -> zwraca indeks elementu w pętli-->
+        <!--        - {{ $count }} -> zwraca ilość elementów w pętli-->
+      </li>
+    } @empty {
+      <li>
+        <p>No tickets available.</p>
+      </li>
+    }
+  </ul>
+</div>
+
 <div id="new-ticket">
-  <app-new-ticket/>
+  <app-new-ticket (addTicket)="onAdd($event)"/>
 </div>
 <!--</article>-->

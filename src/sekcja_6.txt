@@ -127,7 +127,7 @@ dynamiczne wiązanie klas oraz styli
 
 
 !!!!!!!
-odpalić CMS z tfs'a -> nie udało sie bo nie mam uprawnień
+odpalić CMS z tfs'a -> nie udało sie bo nie mam uprawnień (check v)
 
 13.10.2024
 ------------------------------------------------------------------------------------------------------------------------
@@ -229,5 +229,129 @@ new-ticket.component.html
 this.form?.nativeElement.reset(); -> ? próbuje uzyskać dostęp do metody resetowania tylko wtedy gdy nie jest ona niezdefiniowana w przecwnym razie
                                       nie będzie próbował jej wywołać
                                       nativeElement -> pozwala na dostęp do elementu DOM
+@ViewChildren -> jest dekoratorem, który pomaga nam znaleźć elementy potomne w widoku tego komponentu
+
+private form = viewChild('formHTML') -> Nowa metoda partka na Signal() do uzyskania dostępu do elementu DOM od angular 17.3
+private form = viewChildren('formHTML') -> Działa tak samo jak @ViewChildren
 
 new-ticket.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+@ViewChild('formHTML') form?: ElementRef<HTMLFormElement>; -> Jeżeli korzystamy z dekoratora do przechowywania go we właśicwości
+                                                              a następnie chce sie coś zrobić z tym elementem to można to zrobić tylko w
+                                                              metodzie ngAfterViewInit lub inną która jest wyzwalaczem widoku ale
+                                                              nie w ngOnInit ponieważ wtedy element nie jest jeszcze dostępny i będzie undefined
+
+wersja z funkcją viewChild
+    private form = viewChild<ElementRef<HTMLFormElement>>('fromHTML');
+
+  ngOnInit() {
+    console.log('OnInit');
+    console.log(this.form()?.nativeElement)
+  }
+
+  ngAfterViewInit() {
+    console.log('ngAfterViewInit');
+    console.log(this.form()?.nativeElement)
+  }
+
+new-ticket.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+afterRender -> Metoda dodana od angular 16. Jest wykonywany za każdym razem gdt cokolwiek zmieni się na stronie
+                Wykorzytsywany jest najczęsciej do właćzania funkcji gdy cokolwiek na stronie ulegnie zmianie (w całej aplikacji)
+
+afterNextrender -> Metoda dodana od angular 16. Pozwala na wywołanie metody po zakończeniu renderowania widoku
+                  Wykorzystywany jest po następnej zmianie w całej aplikacji
+
+    afterRender(() => {
+      console.log('Control rendered');
+    });
+
+    afterNextRender(() => {
+      console.log('Control next rendered');
+    });
+
+do obu funkcji przekazujemy callback czyli (funkcje) jak argument
+control.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+effect() -> metoda ta przyjmuje funkcję jak argument. Jeżeli zostanie w niej użyty Signal w tej funkcji, która zostanie przekazana jako
+            przekazana do tej metody a Angular skonfiguruje subskrypcje do tego sygnału, co oznacza, że Angular będzie śledził zmiany
+            subskrypcja zostanie automatycznie usuięta gdy ten komponent będzie usunięty z DOM
+
+  constructor() {
+    effect(() => {
+      console.log(this.currentStatus());
+    });
+  }
+
+server-status.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+@for -> dsotępne jest w Angular 17 i nowszych jeżeli chodzi o wersje starsze to trzeba używać
+<li *ngFor
+W pętlach @for można używać kilka ciekawych funkcji jakie oferuje Angular
+
+    @for (ticket of tickets; track ticket.id) {
+      <li>
+        <app-ticket/>
+        - {{ $first }} -> zwraca true jeżeli jest to pierwszy element w pętli
+        - {{ $last }} -> zwraca true jeżeli jest to ostatni element w pętli
+        - {{ $even }} -> zwraca true jeżeli jest to parzysty element w pętli
+        - {{ $odd }} -> zwraca true jeżeli jest to nieparzysty element w pętli
+        - {{ $index }} -> zwraca indeks elementu w pętli
+        - {{ $count }} -> zwraca ilość elementów w pętli
+      </li>
+    }
+
+new-ticket.component.html
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+Wiązanie dwukierunkowe tworzone przy pomocy dekoratorów @Input oraz @Output
+
+  @Input({required: true}) size!: { width: string, height: string };
+  @Output() sizeChange = new EventEmitter<{ width: string, height: string }>();
+
+Wiązanie to jest kombinacją wejścia i wyjścia. Akceptujemy wartości ale także je aktualizujemy
+WAŻNE ABY NAZWY ZMIENNYCH MIAŁY KONKRETNA NAZWĘ
+Aby stworzyć wiązanie dwukierunkowe nalezy do zmiennej dodać sufiks Change
+nazwy musza być takie same jendak z sufiksem Change
+ size -> sizeChange
+  <app-rect [(size)]="rectSize"/> -> w ten sposób tworzymy wiązanie dwukierunkowe do innego komponentu
+rect.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+Wiązanie dwukierunkowe dla wersji Angular > 17.2 -> model
+
+  size = model.required<{ width: string, height: string }>();
+ W przeciwieństwie do dekoratorów @Input oraz @Output, model pozwala na tworzenie wiązań dwukierunkowych bez konieczności
+  tworzenia dodatkowych zmiennych z sufiksem Change
+    <app-rect [(size)]="rectSize"/> -> w ten sposób tworzymy wiązanie dwukierunkowe do innego komponentu
+rect.component.ts
+
