@@ -100,7 +100,7 @@ button.component.ts
 ------------------------------------------------------------------------------------------------------------------------
 <div [class]="{status: true, 'status-online':currentStatus === 'online'}"> -> jeżeli chce sie dodoać klasę do elementu
                                                                           na podstawie warunku można to zrobić w ten sposób
-jeżeli w kluczy czyli nazwie klasy jest - to trzeba użyć '' -> 'status-online':currentStatus === 'online'
+jeżeli w kluczu czyli nazwie klasy jest - to trzeba użyć '' -> 'status-online':currentStatus === 'online'
 
 
 
@@ -128,8 +128,9 @@ dynamiczne wiązanie klas oraz styli
 
 !!!!!!!
 odpalić CMS z tfs'a -> nie udało sie bo nie mam uprawnień
+
+13.10.2024
 ------------------------------------------------------------------------------------------------------------------------
-12.10.2024
 typ unii -> | -> pozwala na zdefiniowanie typu, który może być jednym z kilku innych typów
                  określa on że wartość może być jednym z kilku stringów np. 'online' | 'offline' | 'unknown'
                  jeżeli będą inne wartości to zostanie zwrócony błąd
@@ -143,3 +144,90 @@ currentStatus: 'online' | 'offline' | "unknown" = 'offline';
 ------------------------------------------------------------------------------------------------------------------------
 Component lifeCycle
 
+ngOnInint -> metoda, która jest wywoływana po tym jak Angular zainicjalizuje komponent
+server-element.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+export class ServerStatusComponent implements -> służy do implementacji interfejsu OnInit
+używa się tego wtedy gdy chce się mieć pewność, że metoda ngOnInit zostanie zaimplementowana poprawnie, ponieważ przy błędzie w ngOnInit nie pojawi się błąd w konsoli
+
+  ngOnInit(): void { -> metoda, która jest wywoływana po tym jak Angular zainicjalizuje komponent
+    console.log('ServerStatusComponent initialized');
+  }
+}
+server-status.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+ngOnChanges -> metoda, która jest wywoływana za każdym razem, gdy wartość wejściowa komponentu zmienia się
+ngDoCheck -> metoda, która jest wywoływana za każdym razem, gdy Angular sprawdza, czy wartość wejściowa komponentu zmieniła się
+ngAfterViewInit -> metoda, która jest wywoływana po tym, jak Angular zainicjalizuje widok komponentu
+ngAfterContentInit -> metoda, która jest wywoływana po tym, jak Angular zainicjalizuje zawartość komponentu
+ngAfterViewChecked -> metoda, która jest wywoływana za każdym razem, gdy Angular sprawdza, czy widok komponentu zmienił się
+ngAfterContentChecked -> metoda, która jest wywoływana za każdym razem, gdy Angular sprawdza, czy zawartość komponentu zmieniła się
+
+server-element.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+ngOnDestroy -> metoda, która jest wywoływana po tym, jak Angular usunie komponent
+private interval?: ReturnType<typeof setInterval> -> oznacza to że typ interval powinien być typem wartości zwracanej przez funkcję setInterval
+
+//klasa z metoda DestroyRef -> jest to klasa z biblioteki @angular/core, która poprzez wstrzyknięcie jej jako zależności do komponentu,
+// pozwala na wywołanie metody destroy() w momencie, kiedy komponent jest niszczony.
+// METODA TA JEST DOSTĘPNA W NOWYCH WERSJACH ANGULARA
+
+private destroyRef = inject(DestroyRef);
+
+  ngOnInit() {
+    //wywołanie metody destroy() w momencie, kiedy komponent jest niszczony
+    // jest to listener na zdarzenie
+    this.destroyRef.onDestroy(() => {
+      clearInterval(interval);
+    });
+  }
+
+server-element.component.ts
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+alternatywna metoda do
+([ngModule]) -> #titleInput -> tworzy to zmienną szablonu, w której element, do którego dodawana jest ta zmienna, jest przechowywany w tej zmiennej
+# -> używany jest do utworzenia zmiennej szablonu
+
+<form (ngSubmit)="onSubmit(titleInput, descriptionInput)">
+    <input id="title" name="title" type="text" #titleInput>
+    <textarea id="Request" name="Request" rows="3" #descriptionInput></textarea>
+</form>
+
+Domyślnie uzyskiwany jest dostep do elementu DOM jednak jeżeli zmienna szablonu zostanie umieszczona na jednym z komponentów
+to zamiast dostępu do elementu DOM uzyska sie dostęp do instancji komponentu
+
+new-ticket.component.html
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+@ViewChild -> jest dekoratorem, który pomaga nam znaleźć elementy potomne w widoku tego komponentu
+@ViewChild(ButtonComponent) button ->szukał by instancji komponentu ButtonComponent a po znalezieniu jej przypisał by ją we właściwości button
+@ViewChild('formHTML') form -> szukał by elementu o id formHTML a po znalezieniu go, przypisał by go we właściwości form
+this.form?.nativeElement.reset(); -> ? próbuje uzyskać dostęp do metody resetowania tylko wtedy gdy nie jest ona niezdefiniowana w przecwnym razie
+                                      nie będzie próbował jej wywołać
+                                      nativeElement -> pozwala na dostęp do elementu DOM
+
+new-ticket.component.ts

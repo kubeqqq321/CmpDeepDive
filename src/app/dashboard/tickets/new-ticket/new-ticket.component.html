@@ -1,10 +1,11 @@
 <!--<from (ngForm)="">-->
-<form>
+<!--<form (ngSubmit)="onSubmit(titleInput, descriptionInput, form)" #formHTML>-->
+<form (ngSubmit)="onSubmit(titleInput, descriptionInput)" #formHTML>
   <app-control nameLabel="Title">
-    <input id="title" name="title" type="text">
+    <input id="title" name="title" type="text" #titleInput>
   </app-control>
   <app-control nameLabel="Request">
-    <textarea id="Request" name="Request" rows="3"></textarea>
+    <textarea id="Request" name="Request" rows="3" #descriptionInput></textarea>
   </app-control>
   <p>
     <button appButton>
